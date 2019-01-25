@@ -27,27 +27,26 @@ definitions:
 		endlet
 				
 	function refresh($cell in Cell) =
-		let ($x = first($cell), $y = second($cell)) in
-			let ($status = universe(($x, $y)), $liveNeighbor = liveNeighborCount(($x, $y))) in
-				switch ($status)
-					case ALIVE:
-					 	if ($liveNeighbor = 2 or $liveNeighbor = 3) then
-							ALIVE
-						else
-							DEAD
-						endif
-					case DEAD:
-						if ($liveNeighbor = 3) then
-							ALIVE
-						else
-							DEAD
-						endif
-				endswitch
-			endlet
+		let ($status = universe($cell), $liveNeighbor = liveNeighborCount($cell)) in
+			switch ($status)
+				case ALIVE:
+				 	if ($liveNeighbor = 2 or $liveNeighbor = 3) then
+						ALIVE
+					else
+						DEAD
+					endif
+				case DEAD:
+					if ($liveNeighbor = 3) then
+						ALIVE
+					else
+						DEAD
+					endif
+			endswitch
 		endlet
 
 		
-	rule r_tick = forall $x in Coordinate, $y in Coordinate do universe(($x, $y)) := refresh(($x, $y))		
+	rule r_tick = forall $x in Coordinate, $y in Coordinate do universe(($x, $y)) := refresh(($x, $y))
+	// for some reason if i use `forall $cell in Cell` the interpreter raises a java.lang.NullPointerException
 
 	main rule r_Main = r_tick[]
 	
