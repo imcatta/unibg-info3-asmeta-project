@@ -10,21 +10,24 @@ signature:
 	
 	dynamic controlled universe: Cell -> CellStatus
 	
-	static liveNeighborCount: Cell -> Integer
+	static liveNeighbor: Cell -> Powerset(Cell)
+	static liveNeighborCount: Cell -> Natural
 	static refresh: Cell -> CellStatus
 	
 
 definitions:
 	domain Coordinate = { 0n .. 4n }
 	
-	function liveNeighborCount($cell in Cell) =
+	function liveNeighbor($cell in Cell) =
 		let ($x = first($cell), $y = second($cell)) in
-			size({
+			{
 				$i in Coordinate, $j in Coordinate | 
 				((abs($x - $i) + abs($y - $j) = 1) or (abs($x - $i) = 1 and abs($y - $j) = 1))
 				and universe(($i, $j)) = ALIVE : ($i , $j)
-			})
+			}
 		endlet
+	
+	function liveNeighborCount($cell in Cell) = iton(size(liveNeighbor($cell)))
 				
 	function refresh($cell in Cell) =
 		let ($status = universe($cell), $liveNeighbor = liveNeighborCount($cell)) in
